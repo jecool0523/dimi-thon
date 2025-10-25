@@ -89,7 +89,7 @@ export default function MobileTabs() {
 
         <TabsContent value="schemes" className="space-y-4">
           <Card className="border-purple-100 dark:border-gray-800 shadow-sm">
-            <CardHeader className="pb-2 bg-gradient-to-r from-blue-500 to-cyan-500 text-white rounded-t-lg">
+            <CardHeader className="pb-2 bg-gradient-to-r from-green-500 to-teal-500 text-white rounded-t-lg">
               <CardTitle className="text-md flex items-center">
                 <FileText className="h-4 w-4 mr-2" />
                 Latest Schemes
