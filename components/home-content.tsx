@@ -1,34 +1,73 @@
 "use client"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Search, User, Pencil, ArrowRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import Image from "next/image"
+import { createBrowserClient } from "@supabase/ssr"
+import type { User as SupabaseUser } from "@supabase/supabase-js"
 
 export default function HomeContent() {
   const [isEditingName, setIsEditingName] = useState(false)
   const [name, setName] = useState("시리떡")
+  const [user, setUser] = useState<SupabaseUser | null>(null)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const supabase = createBrowserClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    )
+
+    // Get initial session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null)
+      setLoading(false)
+    })
+
+    // Listen for auth changes
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null)
+    })
+
+    return () => subscription.unsubscribe()
+  }, [])
 
   return (
     <div className="h-screen flex flex-col pb-20 overflow-hidden">
       {/* Header */}
       <header className="flex-shrink-0 flex items-center justify-between bg-warm-bg border-b border-warm-border px-4 py-3">
         <Link href="/" className="flex items-center">
-          <Image
-            src="/images/design-mode/ddeakeep.png"
-            alt="떡 잎"
-            width={60}
-            height={30}
-            className="object-contain"
-          />
+          <Image src="/images/design-mode/ddeakeep.png" alt="떡 잎" width={60} height={30} className="object-contain" />
         </Link>
 
-        <Link href="/login">
-          <Button variant="ghost" size="sm" className="flex items-center gap-2 text-warm-brown">
-            <User className="h-5 w-5" />
-            <span>user님</span>
-          </Button>
-        </Link>
+        {!loading && (
+          <>
+            {user ? (
+              <Link href="/profile">
+                <Button variant="ghost" size="sm" className="flex items-center gap-2 text-warm-brown">
+                  <User className="h-5 w-5" />
+                  <span>{user.email?.split("@")[0] || "user"}님</span>
+                </Button>
+              </Link>
+            ) : (
+              <div className="flex items-center gap-2">
+                <Link href="/login">
+                  <Button variant="ghost" size="sm" className="text-warm-brown">
+                    Login
+                  </Button>
+                </Link>
+                <Link href="/signup">
+                  <Button size="sm" className="bg-lime-600 hover:bg-lime-700 text-white">
+                    Sign up
+                  </Button>
+                </Link>
+              </div>
+            )}
+          </>
+        )}
       </header>
 
       {/* Search Bar */}
