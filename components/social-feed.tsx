@@ -86,20 +86,23 @@ export default function SocialFeed() {
         const { error: insertError } = await supabase.from("users").insert({
           id: authUser.id,
           email: authUser.email,
-          name: authUser.user_metadata?.name || authUser.email,
+          name: authUser.user_metadata?.name || authUser.email?.split("@")[0] || "사용자",
           role: authUser.user_metadata?.role || "citizen",
           avatar_url: authUser.user_metadata?.avatar_url || null,
           is_verified: false,
         })
 
         if (insertError) {
-          console.error("[v0] Error creating user:", insertError)
+          console.error("[v0] Error creating user:", insertError.message)
+          alert("사용자 프로필 생성에 실패했습니다. 페이지를 새로고침해주세요.")
         } else {
           console.log("[v0] User record created successfully")
         }
+      } else if (existingUser) {
+        console.log("[v0] User record already exists")
       }
-    } catch (error) {
-      console.error("[v0] Error ensuring user exists:", error)
+    } catch (error: any) {
+      console.error("[v0] Error ensuring user exists:", error.message)
     }
   }
 
@@ -132,6 +135,8 @@ export default function SocialFeed() {
 
     setLoading(true)
     try {
+      await ensureUserExists(user)
+
       const { data, error } = await supabase
         .from("posts")
         .insert([
@@ -150,8 +155,8 @@ export default function SocialFeed() {
       console.log("[v0] Post created:", data)
       setPostContent("")
       fetchPosts() // Refresh posts
-    } catch (error) {
-      console.error("[v0] Error creating post:", error)
+    } catch (error: any) {
+      console.error("[v0] Error creating post:", error.message)
       alert("게시물 작성에 실패했습니다. 다시 시도해주세요.")
     } finally {
       setLoading(false)
