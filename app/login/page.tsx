@@ -13,7 +13,7 @@ import { ArrowLeft } from "lucide-react"
 import Image from "next/image"
 import { useState } from "react"
 import { getSupabaseBrowserClient } from "@/lib/supabase-client"
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 
 export default function LoginPage() {
   const [email, setEmail] = useState("")
@@ -21,7 +21,10 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
   const router = useRouter()
+  const searchParams = useSearchParams()
   const supabase = getSupabaseBrowserClient()
+
+  const redirectTo = searchParams.get("redirect") || "/"
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -37,7 +40,7 @@ export default function LoginPage() {
       if (error) throw error
 
       console.log("[v0] Login successful:", data)
-      router.push("/social")
+      router.push(redirectTo)
     } catch (err: any) {
       console.error("[v0] Login error:", err)
       setError(err.message || "로그인에 실패했습니다")
@@ -68,7 +71,7 @@ export default function LoginPage() {
               시민
             </TabsTrigger>
             <TabsTrigger value="official" className="data-[state=active]:bg-lime-500 data-[state=active]:text-white">
-              관ㄹ
+              관리자
             </TabsTrigger>
           </TabsList>
 

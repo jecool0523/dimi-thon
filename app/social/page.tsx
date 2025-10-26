@@ -1,3 +1,6 @@
+"use client"
+
+import { useState, useEffect } from "react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import EmergencyAlert from "@/components/emergency-alert"
@@ -10,11 +13,33 @@ import { ThemeToggle } from "@/components/theme-toggle"
 import MobileHeader from "@/components/mobile-header"
 import MobileTabs from "@/components/mobile-tabs"
 import Sidebar from "@/components/sidebar"
+import { getSupabaseBrowserClient } from "@/lib/supabase-client"
+import type { User as SupabaseUser } from "@supabase/supabase-js"
 
 export default function SocialPage() {
+  const [user, setUser] = useState<SupabaseUser | null>(null)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const supabase = getSupabaseBrowserClient()
+
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null)
+      setLoading(false)
+    })
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null)
+    })
+
+    return () => subscription.unsubscribe()
+  }, [])
+
   return (
     <div className="min-h-screen bg-warm-bg pb-16 md:pb-0">
-      {/* Desktop Header - Updated to match home page design with logo images */}
+      {/* Desktop Header - Updated to show logged-in user */}
       <header className="sticky top-0 z-50 hidden md:flex items-center justify-between bg-background border-b border-warm-border px-4 py-3 shadow-sm">
         <div className="flex items-center justify-between w-full max-w-7xl mx-auto">
           <Link href="/" className="flex items-center gap-2">
@@ -32,26 +57,34 @@ export default function SocialPage() {
               </Button>
             </Link>
 
-            <Link href="/login">
-              <Button variant="ghost" size="icon" className="text-foreground">
-                <User className="h-5 w-5" />
-              </Button>
-            </Link>
+            {!loading && (
+              <>
+                {user ? (
+                  <Link href="/profile">
+                    <Button variant="ghost" size="sm" className="flex items-center gap-2 text-foreground">
+                      <User className="h-5 w-5" />
+                      <span>{user.email?.split("@")[0] || "user"}님</span>
+                    </Button>
+                  </Link>
+                ) : (
+                  <>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="border-input text-foreground hover:bg-secondary bg-transparent"
+                    >
+                      <Link href="/login">로그인</Link>
+                    </Button>
+                    <Button size="sm" className="bg-lime-500 hover:bg-lime-600 text-white">
+                      <Link href="/signup">회원가입</Link>
+                    </Button>
+                  </>
+                )}
+              </>
+            )}
 
             <LanguageSwitcher />
             <ThemeToggle />
-
-            <Button
-              variant="outline"
-              size="sm"
-              className="border-input text-foreground hover:bg-secondary bg-transparent"
-            >
-              <Link href="/login">Login</Link>
-            </Button>
-
-            <Button size="sm" className="bg-lime-500 hover:bg-lime-600 text-white">
-              <Link href="/signup">Sign Up</Link>
-            </Button>
           </div>
         </div>
       </header>

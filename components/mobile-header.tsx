@@ -8,7 +8,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/co
 import LanguageSwitcher from "@/components/language-switcher"
 import Image from "next/image"
 import { useEffect, useState } from "react"
-import { createBrowserClient } from "@supabase/ssr"
+import { getSupabaseBrowserClient } from "@/lib/supabase-client"
 import type { User as SupabaseUser } from "@supabase/supabase-js"
 import { useRouter } from "next/navigation"
 
@@ -18,18 +18,13 @@ export default function MobileHeader() {
   const router = useRouter()
 
   useEffect(() => {
-    const supabase = createBrowserClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    )
+    const supabase = getSupabaseBrowserClient()
 
-    // Get initial session
     supabase.auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user ?? null)
       setLoading(false)
     })
 
-    // Listen for auth changes
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
@@ -40,11 +35,7 @@ export default function MobileHeader() {
   }, [])
 
   const handleLogout = async () => {
-    const supabase = createBrowserClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    )
-
+    const supabase = getSupabaseBrowserClient()
     await supabase.auth.signOut()
     router.push("/")
     router.refresh()

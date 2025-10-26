@@ -4,7 +4,7 @@ import { Search, User, Pencil, ArrowRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import Image from "next/image"
-import { createBrowserClient } from "@supabase/ssr"
+import { getSupabaseBrowserClient } from "@/lib/supabase-client"
 import type { User as SupabaseUser } from "@supabase/supabase-js"
 
 export default function HomeContent() {
@@ -14,18 +14,13 @@ export default function HomeContent() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    const supabase = createBrowserClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    )
+    const supabase = getSupabaseBrowserClient()
 
-    // Get initial session
     supabase.auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user ?? null)
       setLoading(false)
     })
 
-    // Listen for auth changes
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {

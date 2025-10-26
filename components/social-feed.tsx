@@ -73,16 +73,13 @@ export default function SocialFeed() {
 
   const ensureUserExists = async (authUser: any) => {
     try {
-      // Check if user exists
       const { data: existingUser, error: checkError } = await supabase
         .from("users")
         .select("id")
         .eq("id", authUser.id)
         .single()
 
-      // If user doesn't exist, create them
       if (checkError && checkError.code === "PGRST116") {
-        console.log("[v0] Creating user record for:", authUser.email)
         const { error: insertError } = await supabase.from("users").insert({
           id: authUser.id,
           email: authUser.email,
@@ -93,16 +90,12 @@ export default function SocialFeed() {
         })
 
         if (insertError) {
-          console.error("[v0] Error creating user:", insertError.message)
+          console.error("사용자 프로필 생성 실패:", insertError.message)
           alert("사용자 프로필 생성에 실패했습니다. 페이지를 새로고침해주세요.")
-        } else {
-          console.log("[v0] User record created successfully")
         }
-      } else if (existingUser) {
-        console.log("[v0] User record already exists")
       }
     } catch (error: any) {
-      console.error("[v0] Error ensuring user exists:", error.message)
+      console.error("사용자 확인 중 오류:", error.message)
     }
   }
 
@@ -123,10 +116,9 @@ export default function SocialFeed() {
         .order("created_at", { ascending: false })
 
       if (error) throw error
-      console.log("[v0] Fetched posts:", data)
       setPosts(data || [])
     } catch (error) {
-      console.error("[v0] Error fetching posts:", error)
+      console.error("게시물 불러오기 실패:", error)
     }
   }
 
@@ -152,11 +144,10 @@ export default function SocialFeed() {
 
       if (error) throw error
 
-      console.log("[v0] Post created:", data)
       setPostContent("")
-      fetchPosts() // Refresh posts
+      fetchPosts()
     } catch (error: any) {
-      console.error("[v0] Error creating post:", error.message)
+      console.error("게시물 작성 실패:", error.message)
       alert("게시물 작성에 실패했습니다. 다시 시도해주세요.")
     } finally {
       setLoading(false)

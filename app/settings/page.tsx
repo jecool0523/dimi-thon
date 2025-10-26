@@ -14,7 +14,7 @@ import { ArrowLeft, Bell, Eye, Globe, Lock, Moon, Sun, User, Volume2, LogOut } f
 import { useAccessibility } from "@/components/accessibility-provider"
 import { useTheme } from "next-themes"
 import { Slider } from "@/components/ui/slider"
-import { createBrowserClient } from "@supabase/ssr"
+import { getSupabaseBrowserClient } from "@/lib/supabase-client"
 import { useRouter } from "next/navigation"
 import type { User as SupabaseUser } from "@supabase/supabase-js"
 
@@ -34,12 +34,8 @@ export default function SettingsPage() {
   const [fontSizeValue, setFontSizeValue] = useState([100])
 
   useEffect(() => {
-    const supabase = createBrowserClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    )
+    const supabase = getSupabaseBrowserClient()
 
-    // Get initial session
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (!session?.user) {
         router.push("/login")
@@ -51,11 +47,7 @@ export default function SettingsPage() {
   }, [router])
 
   const handleLogout = async () => {
-    const supabase = createBrowserClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    )
-
+    const supabase = getSupabaseBrowserClient()
     await supabase.auth.signOut()
     router.push("/")
     router.refresh()

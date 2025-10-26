@@ -1,9 +1,34 @@
+"use client"
+
+import { useState, useEffect } from "react"
 import MobileFooterNav from "@/components/mobile-footer-nav"
 import { Search, User, ShoppingBasket } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
+import { getSupabaseBrowserClient } from "@/lib/supabase-client"
+import type { User as SupabaseUser } from "@supabase/supabase-js"
 
 export default function BasketPage() {
+  const [user, setUser] = useState<SupabaseUser | null>(null)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const supabase = getSupabaseBrowserClient()
+
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null)
+      setLoading(false)
+    })
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null)
+    })
+
+    return () => subscription.unsubscribe()
+  }, [])
+
   return (
     <div className="min-h-screen bg-warm-bg pb-20">
       {/* Header */}
@@ -12,12 +37,24 @@ export default function BasketPage() {
           <h1 className="text-2xl font-bold text-warm-brown">떡 잎</h1>
         </Link>
 
-        <Link href="/login">
-          <Button variant="ghost" size="sm" className="flex items-center gap-2 text-warm-brown">
-            <User className="h-5 w-5" />
-            <span>user님</span>
-          </Button>
-        </Link>
+        {!loading && (
+          <>
+            {user ? (
+              <Link href="/profile">
+                <Button variant="ghost" size="sm" className="flex items-center gap-2 text-warm-brown">
+                  <User className="h-5 w-5" />
+                  <span>{user.email?.split("@")[0] || "user"}님</span>
+                </Button>
+              </Link>
+            ) : (
+              <Link href="/login">
+                <Button variant="ghost" size="sm" className="text-warm-brown">
+                  로그인
+                </Button>
+              </Link>
+            )}
+          </>
+        )}
       </header>
 
       {/* Search Bar */}

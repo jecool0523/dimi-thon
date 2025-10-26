@@ -11,7 +11,7 @@ const languages = [
 ]
 
 export default function LanguageSwitcher() {
-  const [currentLanguage, setCurrentLanguage] = useState("en")
+  const [currentLanguage, setCurrentLanguage] = useState("ko")
 
   const handleLanguageChange = (code: string) => {
     setCurrentLanguage(code)
