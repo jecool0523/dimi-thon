@@ -66,7 +66,7 @@ export default function SignupPage() {
     <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-background to-secondary/20 p-4">
       <Link href="/" className="absolute top-4 left-4 flex items-center text-foreground hover:text-lime-600">
         <ArrowLeft className="h-4 w-4 mr-1" />
-        <span>Back to Home</span>
+        <span>홈으로 돌아가기</span>
       </Link>
 
       <div className="w-full max-w-md">
@@ -75,16 +75,16 @@ export default function SignupPage() {
             <Image src="/images/LOGO.png" alt="Logo" width={80} height={80} className="h-20 w-auto" />
             <Image src="/images/ddeakeep.png" alt="떡 잎" width={100} height={40} className="h-10 w-auto" />
           </div>
-          <p className="text-muted-foreground mt-1">Join your community today</p>
+          <p className="text-muted-foreground mt-1">오늘 커뮤니티에 가입하세요</p>
         </div>
 
         <Tabs defaultValue="citizen" className="w-full">
           <TabsList className="grid grid-cols-2 mb-6">
             <TabsTrigger value="citizen" className="data-[state=active]:bg-lime-500 data-[state=active]:text-white">
-              Citizen
+              시민
             </TabsTrigger>
             <TabsTrigger value="official" className="data-[state=active]:bg-lime-500 data-[state=active]:text-white">
-              Government Official
+              공무원
             </TabsTrigger>
           </TabsList>
 
@@ -92,8 +92,8 @@ export default function SignupPage() {
             <Card className="border-border shadow-lg">
               <form onSubmit={handleSignup}>
                 <CardHeader>
-                  <CardTitle>Create Citizen Account</CardTitle>
-                  <CardDescription>Enter your details to create your account</CardDescription>
+                  <CardTitle>시민 계정 만들기</CardTitle>
+                  <CardDescription>정보를 입력하여 계정을 만드세요</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   {error && (
@@ -106,10 +106,10 @@ export default function SignupPage() {
                   )}
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="first-name">First Name</Label>
+                      <Label htmlFor="first-name">이름</Label>
                       <Input
                         id="first-name"
-                        placeholder="First name"
+                        placeholder="이름"
                         className="border-input text-foreground placeholder:text-muted-foreground"
                         value={firstName}
                         onChange={(e) => setFirstName(e.target.value)}
@@ -117,10 +117,10 @@ export default function SignupPage() {
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="last-name">Last Name</Label>
+                      <Label htmlFor="last-name">성</Label>
                       <Input
                         id="last-name"
-                        placeholder="Last name"
+                        placeholder="성"
                         className="border-input text-foreground placeholder:text-muted-foreground"
                         value={lastName}
                         onChange={(e) => setLastName(e.target.value)}
@@ -130,11 +130,11 @@ export default function SignupPage() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="email">Email</Label>
+                    <Label htmlFor="email">이메일</Label>
                     <Input
                       id="email"
                       type="email"
-                      placeholder="Enter your email"
+                      placeholder="이메일을 입력하세요"
                       className="border-input text-foreground placeholder:text-muted-foreground"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
@@ -143,11 +143,11 @@ export default function SignupPage() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="password">Password</Label>
+                    <Label htmlFor="password">비밀번호</Label>
                     <Input
                       id="password"
                       type="password"
-                      placeholder="Create a password (min 6 characters)"
+                      placeholder="비밀번호 만들기 (최소 6자)"
                       className="border-input text-foreground placeholder:text-muted-foreground"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
@@ -159,25 +159,25 @@ export default function SignupPage() {
                   <div className="flex items-center space-x-2">
                     <Checkbox id="terms" required />
                     <Label htmlFor="terms" className="text-xs font-normal">
-                      I agree to the{" "}
                       <Link href="/terms" className="text-lime-600 hover:text-lime-700">
-                        Terms of Service
-                      </Link>{" "}
-                      and{" "}
-                      <Link href="/privacy" className="text-lime-600 hover:text-lime-700">
-                        Privacy Policy
+                        서비스 약관
                       </Link>
+                      과{" "}
+                      <Link href="/privacy" className="text-lime-600 hover:text-lime-700">
+                        개인정보 처리방침
+                      </Link>
+                      에 동의합니다
                     </Label>
                   </div>
                 </CardContent>
                 <CardFooter className="flex flex-col space-y-4">
                   <Button type="submit" className="w-full bg-lime-500 hover:bg-lime-600 text-white" disabled={loading}>
-                    {loading ? "가입 중..." : "Create Account"}
+                    {loading ? "가입 중..." : "계정 만들기"}
                   </Button>
                   <div className="text-center text-sm">
-                    Already have an account?{" "}
+                    이미 계정이 있으신가요?{" "}
                     <Link href="/login" className="text-lime-600 hover:text-lime-700 font-medium">
-                      Log in
+                      로그인
                     </Link>
                   </div>
                 </CardFooter>
@@ -188,74 +188,74 @@ export default function SignupPage() {
           <TabsContent value="official">
             <Card className="border-border shadow-lg">
               <CardHeader>
-                <CardTitle>Government Official Registration</CardTitle>
-                <CardDescription>Create an account with official verification</CardDescription>
+                <CardTitle>공무원 등록</CardTitle>
+                <CardDescription>공식 인증으로 계정 만들기</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="official-first-name">First Name</Label>
+                    <Label htmlFor="official-first-name">이름</Label>
                     <Input
                       id="official-first-name"
-                      placeholder="First name"
+                      placeholder="이름"
                       className="border-input text-foreground placeholder:text-muted-foreground"
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="official-last-name">Last Name</Label>
+                    <Label htmlFor="official-last-name">성</Label>
                     <Input
                       id="official-last-name"
-                      placeholder="Last name"
+                      placeholder="성"
                       className="border-input text-foreground placeholder:text-muted-foreground"
                     />
                   </div>
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="official-email">Official Email</Label>
+                  <Label htmlFor="official-email">공식 이메일</Label>
                   <Input
                     id="official-email"
                     type="email"
-                    placeholder="Enter your official email"
+                    placeholder="공식 이메일을 입력하세요"
                     className="border-input text-foreground placeholder:text-muted-foreground"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="department">Department</Label>
+                  <Label htmlFor="department">부서</Label>
                   <Select>
                     <SelectTrigger className="border-input text-foreground">
-                      <SelectValue placeholder="Select your department" />
+                      <SelectValue placeholder="부서를 선택하세요" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="agriculture">Agriculture</SelectItem>
-                      <SelectItem value="education">Education</SelectItem>
-                      <SelectItem value="health">Health</SelectItem>
-                      <SelectItem value="home-affairs">Home Affairs</SelectItem>
-                      <SelectItem value="municipal">Municipal Corporation</SelectItem>
-                      <SelectItem value="police">Police</SelectItem>
-                      <SelectItem value="revenue">Revenue</SelectItem>
-                      <SelectItem value="rural-development">Rural Development</SelectItem>
-                      <SelectItem value="urban-development">Urban Development</SelectItem>
+                      <SelectItem value="agriculture">농업</SelectItem>
+                      <SelectItem value="education">교육</SelectItem>
+                      <SelectItem value="health">보건</SelectItem>
+                      <SelectItem value="home-affairs">행정안전</SelectItem>
+                      <SelectItem value="municipal">시청</SelectItem>
+                      <SelectItem value="police">경찰</SelectItem>
+                      <SelectItem value="revenue">세무</SelectItem>
+                      <SelectItem value="rural-development">농촌 개발</SelectItem>
+                      <SelectItem value="urban-development">도시 개발</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="employee-id">Employee ID</Label>
+                  <Label htmlFor="employee-id">직원 ID</Label>
                   <Input
                     id="employee-id"
-                    placeholder="Enter your employee ID"
+                    placeholder="직원 ID를 입력하세요"
                     className="border-input text-foreground placeholder:text-muted-foreground"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="official-password">Password</Label>
+                  <Label htmlFor="official-password">비밀번호</Label>
                   <Input
                     id="official-password"
                     type="password"
-                    placeholder="Create a password"
+                    placeholder="비밀번호 만들기"
                     className="border-input text-foreground placeholder:text-muted-foreground"
                   />
                 </div>
@@ -263,32 +263,30 @@ export default function SignupPage() {
                 <div className="flex items-center space-x-2">
                   <Checkbox id="official-terms" />
                   <Label htmlFor="official-terms" className="text-xs font-normal">
-                    I agree to the{" "}
                     <Link href="/terms" className="text-lime-600 hover:text-lime-700">
-                      Terms of Service
-                    </Link>{" "}
-                    and{" "}
-                    <Link href="/privacy" className="text-lime-600 hover:text-lime-700">
-                      Privacy Policy
+                      서비스 약관
                     </Link>
+                    과{" "}
+                    <Link href="/privacy" className="text-lime-600 hover:text-lime-700">
+                      개인정보 처리방침
+                    </Link>
+                    에 동의합니다
                   </Label>
                 </div>
 
                 <div className="p-3 bg-blue-50 rounded-md border border-blue-200">
                   <p className="text-xs text-blue-700">
-                    <strong>Note:</strong> Official accounts require verification through DigiLocker or Aadhaar. You
-                    will be prompted to complete verification after registration.
+                    <strong>참고:</strong> 공무원 계정은 DigiLocker 또는 주민등록을 통한 인증이 필요합니다. 등록 후
+                    인증을 완료하라는 메시지가 표시됩니다.
                   </p>
                 </div>
               </CardContent>
               <CardFooter className="flex flex-col space-y-4">
-                <Button className="w-full bg-lime-500 hover:bg-lime-600 text-white">
-                  Register & Proceed to Verification
-                </Button>
+                <Button className="w-full bg-lime-500 hover:bg-lime-600 text-white">등록 및 인증 진행</Button>
                 <div className="text-center text-sm">
-                  Already have an account?{" "}
+                  이미 계정이 있으신가요?{" "}
                   <Link href="/login" className="text-lime-600 hover:text-lime-700 font-medium">
-                    Log in
+                    로그인
                   </Link>
                 </div>
               </CardFooter>

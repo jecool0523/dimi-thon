@@ -67,6 +67,39 @@ export default function SocialFeed() {
       router.push("/login")
     } else {
       setUser(user)
+      await ensureUserExists(user)
+    }
+  }
+
+  const ensureUserExists = async (authUser: any) => {
+    try {
+      // Check if user exists
+      const { data: existingUser, error: checkError } = await supabase
+        .from("users")
+        .select("id")
+        .eq("id", authUser.id)
+        .single()
+
+      // If user doesn't exist, create them
+      if (checkError && checkError.code === "PGRST116") {
+        console.log("[v0] Creating user record for:", authUser.email)
+        const { error: insertError } = await supabase.from("users").insert({
+          id: authUser.id,
+          email: authUser.email,
+          name: authUser.user_metadata?.name || authUser.email,
+          role: authUser.user_metadata?.role || "citizen",
+          avatar_url: authUser.user_metadata?.avatar_url || null,
+          is_verified: false,
+        })
+
+        if (insertError) {
+          console.error("[v0] Error creating user:", insertError)
+        } else {
+          console.log("[v0] User record created successfully")
+        }
+      }
+    } catch (error) {
+      console.error("[v0] Error ensuring user exists:", error)
     }
   }
 
@@ -119,6 +152,7 @@ export default function SocialFeed() {
       fetchPosts() // Refresh posts
     } catch (error) {
       console.error("[v0] Error creating post:", error)
+      alert("게시물 작성에 실패했습니다. 다시 시도해주세요.")
     } finally {
       setLoading(false)
     }

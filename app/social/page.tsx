@@ -62,9 +62,10 @@ export default function SocialPage() {
       <main className="container mx-auto px-3 md:px-4 py-4 max-w-4xl">
         {/* Emergency Alert */}
         <EmergencyAlert
-          title="폭우 경보"
-          message="향후 48시간 동안 서울 지역에 폭우가 예상됩니다. 실내에 머물고 불필요한 외출을 삼가주세요."
-          authority="서울시 기상청"
+          title="엘레베이터 점검 예정"
+          message="11/3일 13:00~16:00경에 엘레베이터 점검이 예정되어있습니다.
+          점검 시간동안 엘레베이터 사용이 불가하니 유의해주세요"
+          authority="관리실"
           timestamp="2시간 전"
         />
 

@@ -50,7 +50,7 @@ export default function LoginPage() {
     <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-background to-secondary/20 p-4">
       <Link href="/" className="absolute top-4 left-4 flex items-center text-foreground hover:text-lime-600">
         <ArrowLeft className="h-4 w-4 mr-1" />
-        <span>Back to Home</span>
+        <span>홈으로 돌아가기</span>
       </Link>
 
       <div className="w-full max-w-md">
@@ -59,16 +59,16 @@ export default function LoginPage() {
             <Image src="/images/LOGO.png" alt="Logo" width={80} height={80} className="h-20 w-auto" />
             <Image src="/images/ddeakeep.png" alt="떡 잎" width={100} height={40} className="h-10 w-auto" />
           </div>
-          <p className="text-muted-foreground mt-1">Connect with your community</p>
+          <p className="text-muted-foreground mt-1">커뮤니티와 함께하세요</p>
         </div>
 
         <Tabs defaultValue="citizen" className="w-full">
           <TabsList className="grid grid-cols-2 mb-6">
             <TabsTrigger value="citizen" className="data-[state=active]:bg-lime-500 data-[state=active]:text-white">
-              Citizen
+              시민
             </TabsTrigger>
             <TabsTrigger value="official" className="data-[state=active]:bg-lime-500 data-[state=active]:text-white">
-              Government Official
+              관ㄹ
             </TabsTrigger>
           </TabsList>
 
@@ -76,19 +76,19 @@ export default function LoginPage() {
             <Card className="border-border shadow-lg">
               <form onSubmit={handleLogin}>
                 <CardHeader>
-                  <CardTitle>Citizen Login</CardTitle>
-                  <CardDescription>Enter your credentials to access your account</CardDescription>
+                  <CardTitle>시민 로그인</CardTitle>
+                  <CardDescription>계정 정보를 입력하여 로그인하세요</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   {error && (
                     <div className="p-3 bg-red-50 border border-red-200 rounded-md text-red-700 text-sm">{error}</div>
                   )}
                   <div className="space-y-2">
-                    <Label htmlFor="email">Email or Mobile Number</Label>
+                    <Label htmlFor="email">이메일 또는 휴대폰 번호</Label>
                     <Input
                       id="email"
                       type="email"
-                      placeholder="Enter your email"
+                      placeholder="이메일을 입력하세요"
                       className="border-input text-foreground placeholder:text-muted-foreground"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
@@ -97,15 +97,15 @@ export default function LoginPage() {
                   </div>
                   <div className="space-y-2">
                     <div className="flex items-center justify-between">
-                      <Label htmlFor="password">Password</Label>
+                      <Label htmlFor="password">비밀번호</Label>
                       <Link href="/forgot-password" className="text-xs text-lime-600 hover:text-lime-700">
-                        Forgot password?
+                        비밀번호를 잊으셨나요?
                       </Link>
                     </div>
                     <Input
                       id="password"
                       type="password"
-                      placeholder="Enter your password"
+                      placeholder="비밀번호를 입력하세요"
                       className="border-input text-foreground placeholder:text-muted-foreground"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
@@ -115,18 +115,18 @@ export default function LoginPage() {
                   <div className="flex items-center space-x-2">
                     <Checkbox id="remember" />
                     <Label htmlFor="remember" className="text-sm font-normal">
-                      Remember me for 30 days
+                      30일 동안 로그인 유지
                     </Label>
                   </div>
                 </CardContent>
                 <CardFooter className="flex flex-col space-y-4">
                   <Button type="submit" className="w-full bg-lime-500 hover:bg-lime-600 text-white" disabled={loading}>
-                    {loading ? "로그인 중..." : "Login"}
+                    {loading ? "로그인 중..." : "로그인"}
                   </Button>
                   <div className="text-center text-sm">
-                    Don't have an account?{" "}
+                    계정이 없으신가요?{" "}
                     <Link href="/signup" className="text-lime-600 hover:text-lime-700 font-medium">
-                      Sign up
+                      회원가입
                     </Link>
                   </div>
                 </CardFooter>
@@ -137,46 +137,46 @@ export default function LoginPage() {
           <TabsContent value="official">
             <Card className="border-border shadow-lg">
               <CardHeader>
-                <CardTitle>Government Official Login</CardTitle>
-                <CardDescription>Secure login for verified government officials</CardDescription>
+                <CardTitle>공무원 로그인</CardTitle>
+                <CardDescription>인증된 공무원을 위한 보안 로그인</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="official-id">Official ID</Label>
+                  <Label htmlFor="official-id">공무원 ID</Label>
                   <Input
                     id="official-id"
                     type="text"
-                    placeholder="Enter your official ID"
+                    placeholder="공무원 ID를 입력하세요"
                     className="border-input text-foreground placeholder:text-muted-foreground"
                   />
                 </div>
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
-                    <Label htmlFor="official-password">Password</Label>
+                    <Label htmlFor="official-password">비밀번호</Label>
                     <Link href="/forgot-password" className="text-xs text-lime-600 hover:text-lime-700">
-                      Forgot password?
+                      비밀번호를 잊으셨나요?
                     </Link>
                   </div>
                   <Input
                     id="official-password"
                     type="password"
-                    placeholder="Enter your password"
+                    placeholder="비밀번호를 입력하세요"
                     className="border-input text-foreground placeholder:text-muted-foreground"
                   />
                 </div>
                 <div className="flex items-center space-x-2">
                   <Checkbox id="official-remember" />
                   <Label htmlFor="official-remember" className="text-sm font-normal">
-                    Remember me for 30 days
+                    30일 동안 로그인 유지
                   </Label>
                 </div>
               </CardContent>
               <CardFooter className="flex flex-col space-y-4">
-                <Button className="w-full bg-lime-500 hover:bg-lime-600 text-white">Login with DigiLocker</Button>
+                <Button className="w-full bg-lime-500 hover:bg-lime-600 text-white">DigiLocker로 로그인</Button>
                 <div className="text-center text-sm">
-                  Need verification?{" "}
+                  인증이 필요하신가요?{" "}
                   <Link href="/official-verification" className="text-lime-600 hover:text-lime-700 font-medium">
-                    Get verified
+                    인증 받기
                   </Link>
                 </div>
               </CardFooter>

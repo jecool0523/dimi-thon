@@ -56,12 +56,12 @@ export default function HomeContent() {
               <div className="flex items-center gap-2">
                 <Link href="/login">
                   <Button variant="ghost" size="sm" className="text-warm-brown">
-                    Login
+                    로그인
                   </Button>
                 </Link>
                 <Link href="/signup">
                   <Button size="sm" className="bg-lime-600 hover:bg-lime-700 text-white">
-                    Sign up
+                    회원가입
                   </Button>
                 </Link>
               </div>

@@ -1,66 +1,105 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
 import { Button } from "@/components/ui/button"
-import { Menu } from "lucide-react"
+import { Menu, LogOut } from "lucide-react"
 import Link from "next/link"
-import { usePathname } from "next/navigation"
+import { usePathname, useRouter } from "next/navigation"
 import { cn } from "@/lib/utils"
+import { createBrowserClient } from "@supabase/ssr"
+import type { User as SupabaseUser } from "@supabase/supabase-js"
 
 export default function MobileNav() {
   const pathname = usePathname()
+  const router = useRouter()
   const [open, setOpen] = useState(false)
+  const [user, setUser] = useState<SupabaseUser | null>(null)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const supabase = createBrowserClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    )
+
+    // Get initial session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null)
+      setLoading(false)
+    })
+
+    // Listen for auth changes
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null)
+    })
+
+    return () => subscription.unsubscribe()
+  }, [])
+
+  const handleLogout = async () => {
+    const supabase = createBrowserClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    )
+
+    await supabase.auth.signOut()
+    setOpen(false)
+    router.push("/")
+    router.refresh()
+  }
 
   const routes = [
     {
       href: "/",
-      label: "Home",
+      label: "홈",
       active: pathname === "/",
     },
     {
       href: "/profile",
-      label: "Profile",
+      label: "프로필",
       active: pathname === "/profile",
     },
     {
       href: "/notifications",
-      label: "Notifications",
+      label: "알림",
       active: pathname === "/notifications",
     },
     {
       href: "/messages",
-      label: "Messages",
+      label: "메시지",
       active: pathname === "/messages",
     },
     {
       href: "/schemes",
-      label: "Government Schemes",
+      label: "정부 지원 제도",
       active: pathname === "/schemes",
     },
     {
       href: "/jobs",
-      label: "Jobs & Opportunities",
+      label: "일자리 & 기회",
       active: pathname === "/jobs",
     },
     {
       href: "/events",
-      label: "Events",
+      label: "이벤트",
       active: pathname === "/events",
     },
     {
       href: "/community",
-      label: "Community",
+      label: "커뮤니티",
       active: pathname === "/community",
     },
     {
       href: "/help",
-      label: "Help & Support",
+      label: "도움말 & 지원",
       active: pathname === "/help",
     },
     {
       href: "/settings",
-      label: "Settings",
+      label: "설정",
       active: pathname === "/settings",
     },
   ]
@@ -70,18 +109,16 @@ export default function MobileNav() {
       <SheetTrigger asChild>
         <Button variant="ghost" size="icon">
           <Menu className="h-5 w-5" />
-          <span className="sr-only">Open menu</span>
+          <span className="sr-only">메뉴 열기</span>
         </Button>
       </SheetTrigger>
-      <SheetContent side="right" className="w-[85%] sm:w-[350px] pt-10 border-l-purple-200">
+      <SheetContent side="right" className="w-[85%] sm:w-[350px] pt-10 border-l-border">
         <SheetHeader className="text-left mb-6">
-          <SheetTitle className="flex items-center">
-            <div className="h-8 w-8 rounded-full bg-gradient-to-r from-blue-600 to-purple-600 flex items-center justify-center mr-2">
-              <span className="text-white font-bold">CC</span>
+          <SheetTitle className="flex items-center gap-2">
+            <div className="h-8 w-8 rounded-full bg-lime-500 flex items-center justify-center">
+              <span className="text-white font-bold">떡</span>
             </div>
-            <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-purple-600">
-              CivicConnect
-            </span>
+            <span className="text-xl font-bold text-lime-600">떡잎</span>
           </SheetTitle>
         </SheetHeader>
 
@@ -94,8 +131,8 @@ export default function MobileNav() {
               className={cn(
                 "block py-3 px-2 text-sm rounded-md",
                 route.active
-                  ? "bg-purple-100 text-purple-700 dark:bg-purple-900/50 dark:text-purple-400 font-medium"
-                  : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800",
+                  ? "bg-lime-100 text-lime-700 dark:bg-lime-900/50 dark:text-lime-400 font-medium"
+                  : "text-foreground hover:bg-secondary",
               )}
             >
               {route.label}
@@ -103,21 +140,45 @@ export default function MobileNav() {
           ))}
         </div>
 
-        <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-800 space-y-2">
-          <Button
-            variant="outline"
-            size="sm"
-            className="w-full border-purple-200 text-purple-700 dark:border-purple-800 dark:text-purple-400 hover:bg-purple-50 dark:hover:bg-purple-950"
-          >
-            <Link href="/login">Login</Link>
-          </Button>
+        <div className="mt-6 pt-6 border-t border-border space-y-2">
+          {!loading && !user && (
+            <>
+              <Button
+                variant="outline"
+                size="sm"
+                className="w-full border-lime-200 text-lime-700 dark:border-lime-800 dark:text-lime-400 hover:bg-lime-50 dark:hover:bg-lime-950 bg-transparent"
+                onClick={() => {
+                  setOpen(false)
+                  router.push("/login")
+                }}
+              >
+                로그인
+              </Button>
 
-          <Button
-            size="sm"
-            className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
-          >
-            <Link href="/signup">Sign Up</Link>
-          </Button>
+              <Button
+                size="sm"
+                className="w-full bg-lime-500 hover:bg-lime-600 text-white"
+                onClick={() => {
+                  setOpen(false)
+                  router.push("/signup")
+                }}
+              >
+                회원가입
+              </Button>
+            </>
+          )}
+
+          {!loading && user && (
+            <Button
+              variant="ghost"
+              size="sm"
+              className="w-full justify-start text-red-600 hover:text-red-700 hover:bg-red-50"
+              onClick={handleLogout}
+            >
+              <LogOut className="h-4 w-4 mr-2" />
+              로그아웃
+            </Button>
+          )}
         </div>
       </SheetContent>
     </Sheet>

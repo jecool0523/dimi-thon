@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -10,15 +10,21 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Switch } from "@/components/ui/switch"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import Link from "next/link"
-import { ArrowLeft, Bell, Eye, Globe, Lock, Moon, Sun, User, Volume2 } from "lucide-react"
+import { ArrowLeft, Bell, Eye, Globe, Lock, Moon, Sun, User, Volume2, LogOut } from "lucide-react"
 import { useAccessibility } from "@/components/accessibility-provider"
 import { useTheme } from "next-themes"
 import { Slider } from "@/components/ui/slider"
+import { createBrowserClient } from "@supabase/ssr"
+import { useRouter } from "next/navigation"
+import type { User as SupabaseUser } from "@supabase/supabase-js"
 
 export default function SettingsPage() {
   const { highContrast, toggleHighContrast, largeText, toggleLargeText, screenReader, toggleScreenReader } =
     useAccessibility()
   const { theme, setTheme } = useTheme()
+  const router = useRouter()
+  const [user, setUser] = useState<SupabaseUser | null>(null)
+  const [loading, setLoading] = useState(true)
   const [emailNotifications, setEmailNotifications] = useState(true)
   const [smsNotifications, setSmsNotifications] = useState(true)
   const [pushNotifications, setPushNotifications] = useState(true)
@@ -27,12 +33,48 @@ export default function SettingsPage() {
   const [communityUpdates, setCommunityUpdates] = useState(true)
   const [fontSizeValue, setFontSizeValue] = useState([100])
 
+  useEffect(() => {
+    const supabase = createBrowserClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    )
+
+    // Get initial session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (!session?.user) {
+        router.push("/login")
+      } else {
+        setUser(session.user)
+        setLoading(false)
+      }
+    })
+  }, [router])
+
+  const handleLogout = async () => {
+    const supabase = createBrowserClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    )
+
+    await supabase.auth.signOut()
+    router.push("/")
+    router.refresh()
+  }
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">로딩 중...</div>
+      </div>
+    )
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-secondary/20">
       <div className="container mx-auto px-4 py-6">
         <Link href="/" className="flex items-center text-foreground hover:text-lime-600 mb-6">
           <ArrowLeft className="h-4 w-4 mr-1" />
-          <span>Back to Home</span>
+          <span>홈으로 돌아가기</span>
         </Link>
 
         <div className="flex flex-col md:flex-row items-start gap-6">
@@ -42,11 +84,16 @@ export default function SettingsPage() {
               <CardContent className="p-4">
                 <div className="flex flex-col items-center">
                   <Avatar className="h-20 w-20 mb-4">
-                    <AvatarImage src="/placeholder.svg?height=80&width=80" alt="User" />
-                    <AvatarFallback className="bg-lime-500 text-white text-xl">RK</AvatarFallback>
+                    <AvatarImage
+                      src={user?.user_metadata?.avatar_url || "/placeholder.svg?height=80&width=80"}
+                      alt="User"
+                    />
+                    <AvatarFallback className="bg-lime-500 text-white text-xl">
+                      {user?.user_metadata?.name?.[0] || user?.email?.[0] || "U"}
+                    </AvatarFallback>
                   </Avatar>
-                  <h2 className="font-bold text-lg">Ravi Kumar</h2>
-                  <p className="text-sm text-muted-foreground">@ravikumar</p>
+                  <h2 className="font-bold text-lg">{user?.user_metadata?.name || "사용자"}</h2>
+                  <p className="text-sm text-muted-foreground">@{user?.email?.split("@")[0]}</p>
                 </div>
               </CardContent>
             </Card>
@@ -58,45 +105,54 @@ export default function SettingsPage() {
                   className="justify-start py-3 data-[state=active]:bg-background data-[state=active]:text-lime-600"
                 >
                   <User className="h-4 w-4 mr-2" />
-                  Account
+                  계정
                 </TabsTrigger>
                 <TabsTrigger
                   value="notifications"
                   className="justify-start py-3 data-[state=active]:bg-background data-[state=active]:text-lime-600"
                 >
                   <Bell className="h-4 w-4 mr-2" />
-                  Notifications
+                  알림
                 </TabsTrigger>
                 <TabsTrigger
                   value="appearance"
                   className="justify-start py-3 data-[state=active]:bg-background data-[state=active]:text-lime-600"
                 >
                   <Eye className="h-4 w-4 mr-2" />
-                  Appearance
+                  외관
                 </TabsTrigger>
                 <TabsTrigger
                   value="accessibility"
                   className="justify-start py-3 data-[state=active]:bg-background data-[state=active]:text-lime-600"
                 >
                   <Volume2 className="h-4 w-4 mr-2" />
-                  Accessibility
+                  접근성
                 </TabsTrigger>
                 <TabsTrigger
                   value="language"
                   className="justify-start py-3 data-[state=active]:bg-background data-[state=active]:text-lime-600"
                 >
                   <Globe className="h-4 w-4 mr-2" />
-                  Language
+                  언어
                 </TabsTrigger>
                 <TabsTrigger
                   value="privacy"
                   className="justify-start py-3 data-[state=active]:bg-background data-[state=active]:text-lime-600"
                 >
                   <Lock className="h-4 w-4 mr-2" />
-                  Privacy & Security
+                  개인정보 & 보안
                 </TabsTrigger>
               </TabsList>
             </Tabs>
+
+            <Button
+              variant="outline"
+              className="w-full justify-start text-red-600 hover:text-red-700 hover:bg-red-50 border-red-200 bg-transparent"
+              onClick={handleLogout}
+            >
+              <LogOut className="h-4 w-4 mr-2" />
+              로그아웃
+            </Button>
           </div>
 
           {/* Main Content */}
